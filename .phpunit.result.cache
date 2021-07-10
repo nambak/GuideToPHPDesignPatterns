@@ -1,0 +1,1 @@
+{"version":1,"defects":{"MonopolyTestCase::testGame":4,"MonopolyTestCase::testRent":4},"times":{"MonopolyTestCase::testGame":0.003,"MonopolyTestCase::testRent":0.001}}
