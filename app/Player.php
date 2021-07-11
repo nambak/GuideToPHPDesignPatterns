@@ -43,4 +43,17 @@ class Player
     {
         return $this->savings->getAmount();
     }
+
+    /**
+     * make a payment
+     * 
+     * @param Dollar $amount    the amount to pay
+     * @return Dollar           the amount paid
+     */
+    public function pay(Dollar $amount)
+    {
+        $this->savings = $this->savings->debit($amount);
+
+        return $amount;
+    }
 }

@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use App\Monopoly;
 use App\Player;
+use App\Dollar;
 
 final class MonopolyTestCase extends TestCase
 {
