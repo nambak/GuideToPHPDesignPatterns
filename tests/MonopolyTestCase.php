@@ -4,6 +4,9 @@ use PHPUnit\Framework\TestCase;
 use App\Monopoly;
 use App\Player;
 use App\Dollar;
+use App\PropertyInfo;
+use App\TestableAssessor;
+use App\InvalidPropertyNameException;
 
 final class MonopolyTestCase extends TestCase
 {
@@ -35,6 +38,49 @@ final class MonopolyTestCase extends TestCase
 
         $this->assertEquals(1474, $player1->getBalance());
         $this->assertEquals(1526, $player2->getBalance());
+    }
+
+    public function testPropertyInfo()
+    {
+        $list = ['type', 'price', 'color', 'rent'];
+
+        $this->assertInstanceOf(PropertyInfo::class, $testProp = new PropertyInfo($list));
+
+        foreach ($list as $prop) {
+            $this->assertEquals($prop, $testProp->$prop);
+        }
+    }
+
+    public function testPropertyInfoMissingColorRent()
+    {
+        $list = ['type', 'price'];
+
+        $this->assertInstanceOf(PropertyInfo::class, $testProp = new PropertyInfo($list));
+
+        foreach ($list as $prop) {
+            $this->assertEquals($prop, $testProp->$prop);
+        }
+
+        $this->assertNull($testProp->color);
+        $this->assertNull($testProp->rent);
+    }
+
+    public function testGetPropInfoReturn()
+    {
+        $assessor = new TestableAssessor;
+        
+        $this->assertInstanceOf(PropertyInfo::class, $assessor->getPropInfo('Boardwalk'));
+    }
+
+    public function testBadPropNameReturnsException()
+    {
+        $this->expectException(InvalidPropertyNameException::class);
+
+        $assessor = new TestableAssessor;
+        
+        $assessor->getPropInfo('Main Street');
+        
+        
     }
 }
 
