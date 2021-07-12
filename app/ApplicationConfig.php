@@ -5,7 +5,7 @@ namespace App;
 class ApplicationConfig
 {
     private $state;
-
+    
     private function __construct()
     {
 
