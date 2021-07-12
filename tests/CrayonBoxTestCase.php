@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use App\Color;
+use App\CrayonBox;
 
 final class CrayonBoxTestCase extends TestCase
 {
@@ -14,10 +15,10 @@ final class CrayonBoxTestCase extends TestCase
         $this->assertEquals('#00FF00', $o->getRGB());
     }
 
-    public function testBadColor()
+    public function testErrorBadColor()
     {
-        $this->assertInstanceOf(Color::class, $o = CrayonBox::getColor('Lemon'));
         $this->expectError();
+        $this->assertInstanceOf(Color::class, $o = CrayonBox::getColor('Lemon'));
         $this->assertErrorMessageMatches('/lemon/i');
 
         // got black instead

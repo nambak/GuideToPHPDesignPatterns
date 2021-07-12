@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Color;
+use App\Color;
 
 class CrayonBox
 {
@@ -21,6 +21,8 @@ class CrayonBox
          return [
              'black' => [0, 0, 0],
              'green' => [0, 128, 0],
+             'red' => [255, 0, 0],
+             'lime' => [0, 255, 0],
              // the rest of colors ...
              'aqua' => [0, 255, 255],
          ];
@@ -32,11 +34,11 @@ class CrayonBox
       * @param string $colorName    the name of the desired color
       * @return Color
       */
-      public function getColor($colorName)
+      static public function getColor($colorName)
       {
           $colorName = strtolower($colorName);
 
-          if (array_key_exist($colorName, $colors = CrayonBox::colorList())) {
+          if (array_key_exists($colorName, $colors = CrayonBox::colorList())) {
               $color = $colors[$colorName];
 
               return new Color($color[0], $color[1], $color[2]);
