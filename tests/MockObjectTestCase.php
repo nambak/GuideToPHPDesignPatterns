@@ -27,7 +27,7 @@ final class MockObjectTestCase extends TestCase
     public function testCalcTotalAgain()
     {
         $sum = $this->createMock(Accumulator::class);
-        $sum->expectOnce('add');
+        $sum->expects($this->exactly(3));
 
         calc_total([1, 2, 3], $sum);
 
