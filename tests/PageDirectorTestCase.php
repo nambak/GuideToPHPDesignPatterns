@@ -36,6 +36,43 @@ final class PageDirectorTestCase extends TestCase
         $session->tally();
     }
 
+    public function testClearLoginFunctionality()
+    {
+        $_REQUEST['clear'] = null;
+        $session = $this->createMock(Session::class);
+        $session->expects($this->once())->method('clear')->with(['user_name']);
+        $session->setReturnValue('get', null, ['user_name']);
+        $session->expects($this->once())->method('get');
+
+        $response = $this->createMock(Response::class);
+        $response->assertEquals('', $this->runPage($page));
+
+        $response->tally();
+        $session->tally();
+        unset($_REQUEST['clear']);
+    }
+
+    public function testLoginFromRequest()
+    {
+        $_REQUEST['name'] = 'admin';
+        $_REQUEST['password'] = 'secret';
+
+        $session = $this->createMock(Session::class);
+        $session->expects($this->once())->method('set')->with(['user_name', 'admin']);
+
+        $response = $this->createMock(Response::class);
+        $response->expects($this->once())->method('redirect')->with([self]);
+
+        $page = $this->createMock(PageDirector::class);
+        $this->assertEquals('', $this->runPage($page));
+
+        $reponse->tally();
+        $session->tally();
+
+        unset($_REQUEST['name']);
+        unset($_REQUEST['password']);
+    }
+
     public function runPage($page)
     {
         ob_start();

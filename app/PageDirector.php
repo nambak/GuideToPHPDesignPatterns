@@ -15,7 +15,13 @@ class PageDirector
 
     public function run()
     {
-        if (!$this->isLoggedIn()) {
+        $this->processLogin();
+
+        if ($this->isLoggedIn()) {
+            $this->showPage(
+                new UserLogin($this->session->get('user_name'))
+            );
+        } else {
             $this->showLogin();
         }
 
@@ -37,5 +43,29 @@ class PageDirector
         $this->response->addBody("\n");
         $this->response->addBody('<input type="submit" value="Login">');
         $this->response->addBody('</form>');
+    }
+
+    public function showPage($user)
+    {
+        $vars = [
+            'name' => $user->name(),
+            'self' => SELF,
+        ];
+
+        $this->response->addBodyTemplate('page.tpl', $vars);
+    }
+
+    public function processLogin()
+    {
+        if (array_key_exists('clear', $_REQUEST)) {
+            $this->session->clear('user_name');
+            $this->response->redirect(self);
+        }
+
+        if (array_key_exists('name', $_REQUEST) && array_key_exists('password', $_REQUEST)
+            && UserLogin::validate($_REQEST['name'], $_REQUEST['password'])) {
+                $this->session->set('user_name', $_REQUEST['name']);
+                $this->response->redirect(self);
+            }
     }
 }

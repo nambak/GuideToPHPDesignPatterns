@@ -38,4 +38,20 @@ class Response
             exit;
         }
     }
+
+    /**
+     * adds a simple template mechanism to the response class
+     * 
+     * @param string $template  the path and name of the template file
+     * @return void
+     */
+    public function addBodyTemplate($template, $vars = []): void
+    {
+        if (file_exists($template)) {
+            extract($vars);
+            ob_start();
+            include $template;
+            $this->body .= ob_get_clean();
+        }
+    }
 }
