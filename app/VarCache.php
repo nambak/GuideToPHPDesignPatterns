@@ -10,7 +10,21 @@ class VarCache
     public function __construct($name, $type = 'string')
     {
         $this->name = "cache/{$name}";
-        $this->type = $type;
+        
+        switch (strtolower($type)) {
+            case 'string':
+                $strategy = 'String';
+                break;
+            case 'numeric':
+                $strategy = 'Numeric';
+                break;
+            case 'serialize':
+            default:
+                $strategy = 'Serializing';
+        }
+
+        $strategy .= 'CacheWriter';
+        $this->type = new $strategy;
     }
 
     public function isValid(): bool
@@ -21,19 +35,7 @@ class VarCache
     public function set($value): void
     {
         $fileHandle = fopen("{$this->name}.php", 'w');
-
-        switch ($this->type) {
-            case 'string':
-                $content = sprintf($this->getTemplate(), str_replace("'", "\\'", $value));
-                break;
-            case 'numeric':
-                $content = sprintf($this->getTemplate(), (float) $value);
-                break;
-            default:
-                trigger_error('invalid cache type');
-        }
-
-        fwrite($fileHandle, $content);
+        $this->type->store($fileHandle, $value);
         fclose($fileHandle);
     }
 
@@ -55,6 +57,9 @@ class VarCache
                 break;
             case 'numeric':
                 $template .= "'%s';";
+                break;
+            case 'serialize':
+                $template .= "unserialize(stripslashes('%s'));";
                 break;
             default:
                 trigger_error('invalid cache type');
