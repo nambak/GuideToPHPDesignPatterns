@@ -13,8 +13,14 @@ class EmailErrorLogger
         $this->subject = $subject;
     }
 
-    public function mail($msg)
+    public function mail($msg): void
     {
         mail($this->addr, $this->subject, date('Y-m-d H:i:s ') . $msg);
+    }
+
+    public function update($errorHandler): void
+    {
+        $error = $errorHandler->getState();
+        $this->mail($error['msg']);
     }
 }

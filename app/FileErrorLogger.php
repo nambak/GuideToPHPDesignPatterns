@@ -11,8 +11,14 @@ class FileErrorLogger
         $this->fh = $fileHandle;
     }
 
-    public function write($msg)
+    public function write($msg): void
     {
         fwrite($this->fh, date('Y-m-d H:i:s: ') . $msg);
+    }
+
+    public function update($errorHandler): void
+    {
+        $error = $errorHandler->getState();
+        $this->write($error['msg']);
     }
 }
