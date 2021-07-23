@@ -47,4 +47,41 @@ final class ProxyTestCase extends TestCase
 
         $this->assertEquals($globalWeatherFunctions, $this->client->__getFunctions());
     }
+
+    public function testGetWeatherReport()
+    {
+        $molineWeather = $this->client->getWeatherReport('KMLI');
+
+        $this->assertInstanceOf(stdClass::class, $molineWeather);
+
+        $weaterTests = [
+            'timestamp' => 'String',
+            'station' => 'stdClass',
+            'phenomena' => 'Array',
+            'precipitation' => 'Array',
+            'extremes' => 'Array',
+            'pressure' => 'stdClass',
+            'sky' => 'stdClass',
+            'temperature' => 'stdClass',
+            'visibility' => 'stdClass',
+            'wind' => 'stdClass',
+        ];
+
+        foreach ($weatherTests as $key => $isa) {
+            $this->assertInstanceOf($isa, $molineWeather->$key, "{$key} should be {$isa}. actually [%s]");
+        }
+
+        $temp = $molineWeather->temperature;
+
+        $temperatureTests = [
+            'ambient' => 'Float',
+            'dewpoint' => 'Float',
+            'relativeHumidity' => 'Integer',
+            'string' => 'String',
+        ];
+
+        foreach ($temperatureTests as $key => $isa) {
+            $this->assertInstanceOf($isa, $temp->key, "{$key} should be {$isa}, actually [%s]");
+        }
+    }
 }
