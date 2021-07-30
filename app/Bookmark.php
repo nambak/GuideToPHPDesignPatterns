@@ -12,13 +12,15 @@ class Bookmark
     const SELECT_BY_ID = 'select * from bookmark where id = ?';
     const SELECT_BY_URL = 'select id from bookmark where url like ?';
     const UPDATE_SQL = 'update bookmark set url = ?, name = ?, description = ?, tag = ?, updated = now() where id = ?';
-
-    public $url;
-    public $name;
-    public $description;
-    public $tag;
-    protected $id = self::NEW_BOOKMARK;
+    
+    protected $id;
     protected $conn;
+    protected $url;
+    protected $name;
+    protected $desc;
+    protected $group;
+    protected $crtTime;
+    protected $modTime;
 
     public function __construct($id = false)
     {
@@ -36,6 +38,27 @@ class Bookmark
             } else {
                 trigger_error("DB Error: {$this->conn->errorMsg()}");
             }
+        }
+    }
+
+    public function __call($name, $args)
+    {
+        if (perg_match('/^(get|set)(\w+)/', strtolower($name), $match) 
+            && $attribute = $this->validateAttribute($match[2])) {
+                if ('get' == $match[1]) {
+                    return $this->$attribute;
+                } else {
+                    $this->$attribute = $args[0];
+                }
+        } else {
+            throw new Exception ("Call to undefined method Bookmark::{$name}()");
+        }
+    }
+
+    protected function validateAttribute($name)
+    {
+        if (in_array(strtolower($name), array_keys(get_class_vars(get_class($this))))) {
+            return strtolower($name);
         }
     }
 
@@ -71,6 +94,13 @@ class Bookmark
             trigger_error("DB Error: {$this->conn->errorMsg()}");
         }
     }
+
+    public function setId($id)
+    {
+        if (!$this->id) {
+            $this->id = $id;
+        }
+    }
     
     public function getId()
     {
@@ -94,5 +124,20 @@ class Bookmark
     public function update(): void
     {
         $this->conn->execute(self::UPDATE_SQL, [$this->url, $this->name, $this->description, $this->tag, $this->id]);
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    public function setUrl($url): void
+    {
+        $this->url = $url;
+    }
+
+    public function fetch()
+    {
+        return file_get_contents($this->url);
     }
 }
